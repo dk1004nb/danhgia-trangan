@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đội ngũ lái đò Tràng An</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1d2a24;--muted:#5d6b64;--line:#e3ddd0;--bg:#f5f1e8;--card:#fffdf8;--green:#1f4d3a;--green-2:#2f6b52;--water:#3f8f86;--gold:#e3a51f;--red:#b3402f}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:'Be Vietnam Pro',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+  header{background:var(--green);color:#fff;padding:20px 16px 60px;position:relative;overflow:hidden}
+  header svg.hills{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:48px}
+  .top{max-width:560px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .brand small{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+  .brand h1{margin:4px 0 0;font-size:22px;font-weight:700;line-height:1.25}
+  .lang{display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:3px;flex:none}
+  .lang button{border:0;background:none;color:#fff;font:600 12px inherit;font-family:inherit;padding:6px 10px;border-radius:999px;cursor:pointer}
+  .lang button.on{background:#fff;color:var(--green)}
+  main{max-width:560px;margin:0 auto;padding:0 16px 40px}
+  .intro{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:-44px 0 14px;position:relative;box-shadow:0 6px 20px rgba(31,77,58,.08)}
+  .intro p{margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--muted)}
+  .intro p b{color:var(--ink)}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .kpi{background:#f2efe6;border-radius:12px;padding:10px 8px;text-align:center}
+  .kpi .v{font-size:20px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums}
+  .kpi .l{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3}
+  .search{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 8px}
+  .sbox{position:relative}
+  .sbox svg{position:absolute;left:14px;top:50%;transform:translateY(-50%)}
+  .sbox input{width:100%;font:16px inherit;font-family:inherit;padding:13px 14px 13px 42px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+  .sbox input:focus{outline:none;border-color:var(--water)}
+  .filters{display:flex;gap:8px;margin-top:8px}
+  .filters select{flex:1;font:14px inherit;font-family:inherit;padding:9px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);min-width:0}
+  .count{font-size:13px;color:var(--muted);margin:6px 2px 8px}
+  .list{display:flex;flex-direction:column;gap:8px}
+  .item{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .row{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;width:100%;border:0;background:none;text-align:left;font:inherit;color:inherit}
+  .row:focus-visible{outline:2px solid var(--water);outline-offset:-2px}
+  .av{width:46px;height:46px;border-radius:12px;background:#e7f1ee;color:var(--green);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;line-height:1}
+  .av small{font-size:9px;letter-spacing:.06em;opacity:.7}
+  .av b{font-size:15px;margin-top:2px}
+  .who{flex:1;min-width:0}
+  .who .nm{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .who .meta{font-size:13px;color:var(--muted);margin-top:2px}
+  .badge{display:inline-block;font-size:11px;font-weight:700;color:#8a5a00;background:#fff3d6;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:1px}
+  .sc{text-align:right;flex:none}
+  .sc .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:4px;justify-content:flex-end}
+  .sc .v svg{width:16px;height:16px;fill:var(--gold)}
+  .sc .n{font-size:12px;color:var(--muted)}
+  .sc .na{font-size:12px;color:var(--muted);max-width:80px;line-height:1.3}
+  .detail{display:none;padding:2px 14px 14px;border-top:1px dashed var(--line)}
+  .item.open .detail{display:block}
+  .cb{margin-top:10px}
+  .cb .r{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+  .cb .r b{font-variant-numeric:tabular-nums}
+  .bar{height:7px;background:#ece6d8;border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--water);border-radius:99px}
+  .more{display:block;width:100%;margin:12px 0 0;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:12px;font:600 15px inherit;font-family:inherit;color:var(--green);cursor:pointer}
+  .empty{text-align:center;color:var(--muted);padding:30px 10px}
+  footer{margin-top:22px;font-size:13px;color:var(--muted);line-height:1.6}
+  footer .hot{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:12px;color:var(--ink)}
+  footer .hot a{color:var(--green);font-weight:700;text-decoration:none}
+  .demo{background:#fff6dd;border:1px dashed var(--gold);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;line-height:1.5}
+  .demo a{color:var(--green);font-weight:600}
+  .loading{text-align:center;padding:30px 12px;color:var(--muted)}
+  .spin{width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--green);border-radius:50%;margin:0 auto 12px;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .retry{display:inline-block;margin-top:12px;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 16px;font:600 14px inherit;font-family:inherit;color:var(--green);cursor:pointer}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<script src="config.js"></script>
+
+<header>
+  <div class="top">
+    <div class="brand"><small data-t="site">Khu du lịch sinh thái Tràng An</small><h1 data-t="title">Đội ngũ người lái đò</h1></div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="vi" class="on">VI</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+  </div>
+  <svg class="hills" viewBox="0 0 400 48" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 48 L0 30 Q30 4 55 26 Q70 10 92 24 Q120 0 150 28 Q175 12 200 30 Q230 2 262 26 Q285 14 305 28 Q335 6 365 26 Q385 16 400 22 L400 48 Z" fill="#2f6b52" opacity=".55"/>
+    <path d="M0 48 L0 40 Q60 30 120 40 T240 40 T400 38 L400 48 Z" fill="#f5f1e8"/>
+  </svg>
+</header>
+
+<main>
+  <section class="intro">
+    <p id="introTxt"></p>
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="kN">–</div><div class="l" data-t="kN">người lái đò</div></div>
+      <div class="kpi"><div class="v" id="kAvg">–</div><div class="l" data-t="kAvg">điểm trung bình</div></div>
+      <div class="kpi"><div class="v" id="kTot">–</div><div class="l" data-t="kTot">lượt đánh giá</div></div>
+    </div>
+  </section>
+
+  <div class="search">
+    <div class="sbox">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="#5d6b64" stroke-width="2" fill="none"/><path d="M20 20l-4-4" stroke="#5d6b64" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="q" type="search" inputmode="search" autocomplete="off" data-tp="search" placeholder="Tìm theo mã số, số đò hoặc họ tên">
+    </div>
+    <div class="filters">
+      <select id="team" aria-label="Tổ"></select>
+      <select id="sort" aria-label="Sắp xếp"></select>
+    </div>
+  </div>
+
+  <div class="count" id="count"></div>
+  <div class="list" id="list"><div class="loading"><div class="spin"></div><span id="loadTxt">Đang tải…</span></div></div>
+  <button class="more hidden" id="more" type="button"></button>
+
+  <footer>
+    <div class="hot hidden" id="hot"></div>
+    <div id="note"></div>
+  </footer>
+</main>
+
+<script>
+(function(){
+  var T = {
+    vi:{site:'Khu du lịch sinh thái Tràng An',title:'Đội ngũ người lái đò',
+        intro:'Thông tin công khai về người lái đò và đánh giá của du khách. <b>Sau chuyến đi, hãy quét mã QR trên thẻ của người lái đò</b> để đánh giá – ý kiến của bạn giúp Tràng An phục vụ tốt hơn.',
+        kN:'người lái đò',kAvg:'điểm trung bình',kTot:'lượt đánh giá',search:'Tìm theo mã số, số đò hoặc họ tên',
+        allTeams:'Tất cả các tổ',sortId:'Sắp xếp: mã số',sortScore:'Điểm cao nhất',sortN:'Nhiều đánh giá nhất',sortBoat:'Số đò',
+        boat:'ĐÒ',rower:'Người lái đò',team:'',ratings:'lượt',notEnough:'Chưa đủ đánh giá',excellent:'Xuất sắc',
+        found:function(n,t){return 'Hiển thị '+n+' / '+t+' người lái đò';},more:function(n){return 'Xem thêm ('+n+')';},
+        none:'Không tìm thấy người lái đò phù hợp.',
+        hot:'Phản ánh, góp ý về chất lượng dịch vụ:',
+        note:function(s,d){return 'Điểm tính trong '+(s.days?s.days+' ngày gần nhất':'toàn bộ thời gian')+'; chỉ hiển thị khi có từ '+s.minRatings+' lượt đánh giá. Cập nhật lúc '+d+'. Mỗi tiêu chí chấm từ 1 đến 5 sao.';},
+        crit:{thaido:'Thái độ phục vụ',antoan:'An toàn',minhbach:'Minh bạch (không đòi boa, ép mua)',thuyetminh:'Hướng dẫn, thuyết minh',lotrinh:'Đúng lộ trình, thời gian',vesinh:'Vệ sinh, môi trường'},
+        loading:'Đang tải…',net:'Không tải được dữ liệu. Vui lòng kiểm tra kết nối mạng.',retry:'Thử lại'},
+    en:{site:'Trang An Scenic Landscape Complex',title:'Our boat rowers',
+        intro:'Public information about our boat rowers and visitor ratings. <b>After your trip, scan the QR code on your rower’s badge</b> to rate them – your feedback helps us serve you better.',
+        kN:'rowers',kAvg:'average rating',kTot:'ratings',search:'Search by ID, boat number or name',
+        allTeams:'All teams',sortId:'Sort: ID',sortScore:'Highest rated',sortN:'Most ratings',sortBoat:'Boat number',
+        boat:'BOAT',rower:'Boat rower',team:'',ratings:'ratings',notEnough:'Not enough ratings yet',excellent:'Excellent',
+        found:function(n,t){return 'Showing '+n+' of '+t+' rowers';},more:function(n){return 'Show more ('+n+')';},
+        none:'No matching rowers found.',
+        hot:'Service feedback hotline:',
+        note:function(s,d){return 'Scores cover '+(s.days?'the last '+s.days+' days':'all time')+' and are shown once a rower has at least '+s.minRatings+' ratings. Updated '+d+'. Each aspect is rated 1 to 5 stars.';},
+        crit:{thaido:'Attitude',antoan:'Safety',minhbach:'Honesty (no tips, no sales pressure)',thuyetminh:'Guidance',lotrinh:'Route & timing',vesinh:'Cleanliness'},
+        loading:'Loading…',net:'Could not load data. Please check your connection.',retry:'Try again'}
+  };
+  var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 6 6.5.8-4.8 4.5 1.2 6.5L12 17.3l-5.8 3.1 1.2-6.5L2.6 9.4l6.5-.8z"/></svg>';
+  var PAGE = 40;
+
+  var API = (window.TA_CONFIG || {}).api || '';
+  var data = null, S = {showName:true,minRatings:5,days:90,hotline:''}, drivers = [];
+  function setData(d){
+    data = d; S = data.settings || S;
+    drivers = data.drivers.map(function(r){
+      return { id:r[0], name:r[1]||'', boat:r[2]||'', team:r[3]||'', n:r[4]||0, score:r[5], avgs:r[6],
+               key: fold(r[0]+' '+(r[1]||'')+' '+(r[2]||'')+' do '+(r[2]||'')) };
+    });
+  }
+  var lang = 'vi', q = '', team = '', sort = 'id', shown = PAGE, open = {};
+  try { var l0 = (navigator.language||'').toLowerCase(); if (l0 && l0.indexOf('vi') !== 0) lang = 'en'; } catch(e){}
+
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function fold(s){ return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d'); }
+  function num(x,d){ return x==null?'–':x.toFixed(d==null?1:d).replace('.', lang==='vi'?',':'.'); }
+  function cmpId(a,b){ return a.id.localeCompare(b.id, undefined, {numeric:true}); }
+  function dt(t){ var d=new Date(t); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+' '+('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear(); }
+
+  function filtered(){
+    var fq = fold(q.trim());
+    var arr = drivers.filter(function(d){
+      if (team && d.team !== team) return false;
+      if (!fq) return true;
+      return fq.split(/\s+/).every(function(w){ return d.key.indexOf(w) >= 0; });
+    });
+    arr.sort(function(a,b){
+      if (sort === 'score') { if (a.score==null && b.score==null) return cmpId(a,b); if (a.score==null) return 1; if (b.score==null) return -1; return b.score-a.score || b.n-a.n; }
+      if (sort === 'n') return b.n-a.n || cmpId(a,b);
+      if (sort === 'boat') return String(a.boat).localeCompare(String(b.boat), undefined, {numeric:true});
+      return cmpId(a,b);
+    });
+    return arr;
+  }
+
+  function itemHtml(d){
+    var L = T[lang];
+    var name = d.name || L.rower;
+    var badge = d.score != null && d.score >= 4.5 ? '<span class="badge">'+L.excellent+'</span>' : '';
+    var sc = d.score != null
+      ? '<div class="v">'+STAR+num(d.score)+'</div><div class="n">'+d.n.toLocaleString('vi-VN')+' '+L.ratings+'</div>'
+      : '<div class="na">'+L.notEnough+(d.n?' ('+d.n+')':'')+'</div>';
+    var det = '';
+    if (d.avgs){
+      det = '<div class="detail">' + data.criteria.map(function(k,i){
+        var v = d.avgs[i];
+        return '<div class="cb"><div class="r"><span>'+esc(L.crit[k]||k)+'</span><b>'+num(v)+'</b></div><div class="bar"><i style="width:'+(v?v/5*100:0)+'%"></i></div></div>';
+      }).join('') + '</div>';
+    }
+    return '<div class="item'+(open[d.id]?' open':'')+'" data-id="'+esc(d.id)+'">'
+      + '<button type="button" class="row"'+(d.avgs?' aria-expanded="'+(!!open[d.id])+'"':'')+'>'
+      + '<div class="av"><small>'+L.boat+'</small><b>'+esc(d.boat||'–')+'</b></div>'
+      + '<div class="who"><div class="nm">'+esc(name)+badge+'</div><div class="meta">'+esc(d.id)+(d.team?' · '+esc(d.team):'')+'</div></div>'
+      + '<div class="sc">'+sc+'</div></button>'+det+'</div>';
+  }
+
+  function render(){
+    var L = T[lang], arr = filtered(), part = arr.slice(0, shown);
+    $('list').innerHTML = part.length ? part.map(itemHtml).join('') : '<div class="empty">'+L.none+'</div>';
+    $('count').textContent = L.found(part.length, arr.length);
+    var rest = arr.length - part.length;
+    $('more').classList.toggle('hidden', rest <= 0);
+    $('more').textContent = L.more(rest);
+  }
+
+  function applyLang(){
+    var L = T[lang];
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-t]').forEach(function(el){ var v = L[el.dataset.t]; if (typeof v === 'string') el.textContent = v; });
+    document.querySelectorAll('[data-tp]').forEach(function(el){ el.placeholder = L[el.dataset.tp]; });
+    document.querySelectorAll('.lang button').forEach(function(b){ b.classList.toggle('on', b.dataset.lang === lang); });
+    $('introTxt').innerHTML = L.intro;
+    if (!data) { var lt = document.getElementById('loadTxt'); if (lt) lt.textContent = L.loading; return; }
+    $('kN').textContent = drivers.length.toLocaleString('vi-VN');
+    $('kAvg').textContent = data.overall != null ? num(data.overall) : '–';
+    $('kTot').textContent = (data.total||0).toLocaleString('vi-VN');
+    var teams = drivers.map(function(d){return d.team;}).filter(function(t,i,a){return t && a.indexOf(t)===i;})
+      .sort(function(a,b){return a.localeCompare(b, undefined, {numeric:true});});
+    $('team').innerHTML = '<option value="">'+L.allTeams+'</option>' + teams.map(function(t){ return '<option'+(t===team?' selected':'')+'>'+esc(t)+'</option>'; }).join('');
+    $('sort').innerHTML = [['id',L.sortId],['score',L.sortScore],['n',L.sortN],['boat',L.sortBoat]]
+      .map(function(o){ return '<option value="'+o[0]+'"'+(o[0]===sort?' selected':'')+'>'+o[1]+'</option>'; }).join('');
+    if (S.hotline){
+      var tel = String(S.hotline).replace(/[^0-9+]/g,'');
+      $('hot').classList.remove('hidden');
+      $('hot').innerHTML = esc(L.hot)+' '+(tel ? '<a href="tel:'+esc(tel)+'">'+esc(S.hotline)+'</a>' : '<b>'+esc(S.hotline)+'</b>');
+    }
+    $('note').textContent = L.note(S, dt(data.updated));
+    render();
+  }
+
+  $('q').addEventListener('input', function(){ q = this.value; shown = PAGE; render(); });
+  $('team').addEventListener('change', function(){ team = this.value; shown = PAGE; render(); });
+  $('sort').addEventListener('change', function(){ sort = this.value; shown = PAGE; render(); });
+  $('more').addEventListener('click', function(){ shown += PAGE * 2; render(); });
+  $('list').addEventListener('click', function(e){
+    var row = e.target.closest('.row'); if (!row) return;
+    var it = row.closest('.item'); if (!it.querySelector('.detail')) return;
+    var id = it.dataset.id; open[id] = !open[id];
+    it.classList.toggle('open', open[id]); row.setAttribute('aria-expanded', open[id]);
+  });
+  document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click', function(){ lang = b.dataset.lang; applyLang(); }); });
+
+  /* Tải dữ liệu: không gửi cookie Google (credentials:'omit') */
+  function load(tries){
+    var L = T[lang];
+    $('list').innerHTML = '<div class="loading"><div class="spin"></div><span id="loadTxt">'+L.loading+'</span></div>';
+    fetch(API, { method:'POST', credentials:'omit', redirect:'follow', body: JSON.stringify({ action:'pub_dir' }) })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(res){ if (!res || !res.ok) throw new Error(res && res.error); setData(res.data); applyLang(); })
+      .catch(function(){
+        if (tries > 0) return load(tries - 1);
+        var L2 = T[lang];
+        $('list').innerHTML = '<div class="loading">'+esc(L2.net)+'<br><button type="button" class="retry" id="retryBtn">'+esc(L2.retry)+'</button></div>';
+        $('retryBtn').onclick = function(){ load(1); };
+      });
+  }
+
+  applyLang();
+  if (API) load(1);
+})();
+</script>
+</body>
+</html>
