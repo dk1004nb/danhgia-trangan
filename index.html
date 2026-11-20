@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đánh giá chuyến đò Tràng An</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1d2a24; --muted:#5d6b64; --line:#e3ddd0; --bg:#f5f1e8; --card:#fffdf8;
+    --green:#1f4d3a; --green-2:#2f6b52; --water:#3f8f86; --gold:#e3a51f; --red:#b3402f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:'Be Vietnam Pro',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:480px;margin:0 auto;padding:0 16px 40px}
+  header{background:var(--green);color:#fff;padding:20px 16px 56px;position:relative;overflow:hidden}
+  header svg.hills{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:48px}
+  .top{max-width:480px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .brand small{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+  .brand h1{margin:4px 0 0;font-size:21px;font-weight:700;line-height:1.25}
+  .lang{display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:3px}
+  .lang button{border:0;background:none;color:#fff;font:600 12px inherit;font-family:inherit;padding:6px 10px;border-radius:999px;cursor:pointer}
+  .lang button.on{background:#fff;color:var(--green)}
+  .driver{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:-40px 0 16px;position:relative;display:flex;gap:14px;align-items:center;box-shadow:0 6px 20px rgba(31,77,58,.08)}
+  .boat{width:56px;height:56px;border-radius:14px;background:#e7f1ee;display:grid;place-items:center;flex:none}
+  .driver b{font-size:18px;display:block}
+  .driver span{color:var(--muted);font-size:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px;margin-bottom:16px}
+  .crit{padding:14px 0;border-bottom:1px solid var(--line)}
+  .crit:last-child{border-bottom:0}
+  .crit .lbl{font-weight:600;font-size:15px}
+  .crit .hint{font-size:13px;color:var(--muted);margin-top:2px}
+  .stars{display:flex;gap:6px;margin-top:10px}
+  .stars button{border:0;background:none;padding:2px;cursor:pointer;line-height:0;border-radius:8px}
+  .stars button:focus-visible{outline:2px solid var(--water);outline-offset:2px}
+  .stars svg{width:36px;height:36px;fill:#ddd6c6;transition:fill .12s,transform .12s}
+  .stars button.on svg{fill:var(--gold)}
+  .stars button:active svg{transform:scale(.9)}
+  .crit.missing .lbl{color:var(--red)}
+  h2{font-size:15px;margin:22px 4px 8px;color:var(--green)}
+  .yn{display:flex;gap:10px;padding:14px 0}
+  .yn button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:12px;font:600 15px inherit;font-family:inherit;color:var(--ink);cursor:pointer}
+  .yn button.on.yes{border-color:var(--red);background:#fbeae6;color:var(--red)}
+  .yn button.on.no{border-color:var(--green-2);background:#e7f1ee;color:var(--green)}
+  textarea{width:100%;min-height:110px;border:1.5px solid var(--line);border-radius:12px;padding:12px;font:15px inherit;font-family:inherit;resize:vertical;margin:12px 0;background:#fff;color:var(--ink)}
+  textarea:focus{outline:none;border-color:var(--water)}
+  .count{font-size:12px;color:var(--muted);text-align:right;margin:-6px 0 10px}
+  .submit{width:100%;border:0;background:var(--green);color:#fff;font:700 16px inherit;font-family:inherit;padding:16px;border-radius:14px;cursor:pointer}
+  .submit:disabled{opacity:.6}
+  .err{color:var(--red);font-size:14px;margin:10px 4px;min-height:1em}
+  .note{font-size:12px;color:var(--muted);margin:14px 4px;line-height:1.5}
+  .done{text-align:center;padding:40px 12px}
+  .done .tick{width:72px;height:72px;border-radius:50%;background:#e7f1ee;display:grid;place-items:center;margin:0 auto 16px}
+  .done h2{font-size:22px;color:var(--green);margin:0 0 8px}
+  .done p{color:var(--muted);line-height:1.6;margin:0 0 6px}
+  .demo{background:#fff6dd;border:1px dashed var(--gold);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;line-height:1.5}
+  .demo a{color:var(--green);font-weight:600}
+  .dirlink{display:inline-block;margin-top:18px;color:var(--green);font-weight:600;text-decoration:none;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 16px}
+  .loading{text-align:center;padding:60px 12px;color:var(--muted)}
+  .spin{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--green);border-radius:50%;margin:0 auto 14px;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<script src="config.js"></script>
+
+<header>
+  <div class="top">
+    <div class="brand"><small data-t="site">Khu du lịch sinh thái Tràng An</small><h1 data-t="title">Đánh giá chuyến đò của bạn</h1></div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="vi" class="on">VI</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+  </div>
+  <svg class="hills" viewBox="0 0 400 48" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 48 L0 30 Q30 4 55 26 Q70 10 92 24 Q120 0 150 28 Q175 12 200 30 Q230 2 262 26 Q285 14 305 28 Q335 6 365 26 Q385 16 400 22 L400 48 Z" fill="#2f6b52" opacity=".55"/>
+    <path d="M0 48 L0 40 Q60 30 120 40 T240 40 T400 38 L400 48 Z" fill="#f5f1e8"/>
+  </svg>
+</header>
+
+<main class="wrap">
+  <section id="loadView" class="loading"><div class="spin"></div><span data-t="loading">Đang tải…</span></section>
+
+  <section id="formView" class="hidden">
+    <div class="driver">
+      <div class="boat" aria-hidden="true">
+        <svg width="34" height="34" viewBox="0 0 34 34"><path d="M3 20h28l-4 6H7z" fill="#1f4d3a"/><path d="M17 6v13M17 6l7 10h-7" stroke="#3f8f86" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 29q4 2 8 0t8 0 8 0 8 0" stroke="#3f8f86" stroke-width="1.6" fill="none"/></svg>
+      </div>
+      <div><span data-t="driverLbl">Người lái đò</span><b id="dId">—</b><span id="dMeta"></span></div>
+    </div>
+
+    <h2 data-t="h2stars">Chấm điểm theo từng tiêu chí</h2>
+    <div class="card" id="criteria"></div>
+
+    <h2 data-t="h2tip">Người lái đò có xin tiền boa hoặc ép mua hàng không?</h2>
+    <div class="card">
+      <div class="yn">
+        <button type="button" class="yes" data-tip="yes" data-t="yes">Có</button>
+        <button type="button" class="no" data-tip="no" data-t="no">Không</button>
+      </div>
+    </div>
+
+    <h2 data-t="h2cmt">Nhận xét, góp ý hoặc lời khen</h2>
+    <div class="card">
+      <textarea id="comment" maxlength="1000" data-tp="cmtPh" placeholder="Điều bạn thích, hoặc điều cần cải thiện…"></textarea>
+      <div class="count"><span id="cnt">0</span>/1000</div>
+    </div>
+
+    <div class="err" id="err" role="alert"></div>
+    <button class="submit" id="submit" type="button" data-t="send">Gửi đánh giá</button>
+    <p class="note" data-t="privacy">Đánh giá là ẩn danh. Hệ thống không thu thập họ tên, số điện thoại hay vị trí của bạn. Ý kiến chỉ dùng để nâng cao chất lượng phục vụ.</p>
+  </section>
+
+  <section id="doneView" class="done hidden">
+    <div class="tick"><svg width="36" height="36" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#1f4d3a" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h2 data-t="thanks">Cảm ơn bạn!</h2>
+    <p data-t="thanks2">Ý kiến của bạn giúp Tràng An phục vụ du khách tốt hơn.</p>
+    <p data-t="thanks3">Chúc bạn một chuyến tham quan vui vẻ.</p>
+    <a class="dirlink" href="danhba.html" data-t="dirLink">Xem đội ngũ người lái đò →</a>
+  </section>
+
+  <section id="errView" class="done hidden">
+    <h2 id="errTitle" data-t="nf">Không tìm thấy người lái đò</h2>
+    <p id="errText" data-t="nf2">Mã QR không hợp lệ hoặc đã ngừng sử dụng. Vui lòng quét lại mã trên thẻ của người lái đò.</p>
+    <button class="dirlink" id="retry" type="button" data-t="retry" style="display:none">Thử lại</button>
+    <a class="dirlink" href="danhba.html" data-t="dirLink">Xem đội ngũ người lái đò →</a>
+  </section>
+</main>
+
+<script>
+(function(){
+  var T = {
+    vi:{site:'Khu du lịch sinh thái Tràng An',title:'Đánh giá chuyến đò của bạn',driverLbl:'Người lái đò',boat:'Đò số',
+        h2stars:'Chấm điểm theo từng tiêu chí',h2tip:'Người lái đò có xin tiền boa hoặc ép mua hàng không?',yes:'Có',no:'Không',
+        h2cmt:'Nhận xét, góp ý hoặc lời khen',cmtPh:'Điều bạn thích, hoặc điều cần cải thiện…',send:'Gửi đánh giá',sending:'Đang gửi…',
+        privacy:'Đánh giá là ẩn danh. Hệ thống không thu thập họ tên, số điện thoại hay vị trí của bạn. Ý kiến chỉ dùng để nâng cao chất lượng phục vụ.',
+        thanks:'Cảm ơn bạn!',thanks2:'Ý kiến của bạn giúp Tràng An phục vụ du khách tốt hơn.',thanks3:'Chúc bạn một chuyến tham quan vui vẻ.',dirLink:'Xem đội ngũ người lái đò →',
+        nf:'Không tìm thấy người lái đò',nf2:'Mã QR không hợp lệ hoặc đã ngừng sử dụng. Vui lòng quét lại mã trên thẻ của người lái đò.',
+        loading:'Đang tải…',retry:'Thử lại',net:'Không kết nối được',net2:'Vui lòng kiểm tra kết nối mạng rồi thử lại.',missing:'Vui lòng chấm đủ tất cả tiêu chí.',dup:'Bạn đã đánh giá người lái đò này rồi. Cảm ơn bạn!',fail:'Không gửi được. Vui lòng kiểm tra mạng và thử lại.',
+        rate:['Rất tệ','Tệ','Bình thường','Tốt','Rất tốt']},
+    en:{site:'Trang An Scenic Landscape Complex',title:'Rate your boat trip',driverLbl:'Boat rower',boat:'Boat no.',
+        h2stars:'Rate each aspect',h2tip:'Did the rower ask for tips or pressure you to buy anything?',yes:'Yes',no:'No',
+        h2cmt:'Comments, suggestions or compliments',cmtPh:'What you enjoyed, or what could be better…',send:'Submit rating',sending:'Sending…',
+        privacy:'Your rating is anonymous. We do not collect your name, phone number or location. Feedback is used only to improve service.',
+        thanks:'Thank you!',thanks2:'Your feedback helps Trang An serve visitors better.',thanks3:'Enjoy the rest of your visit.',dirLink:'See all boat rowers →',
+        nf:'Rower not found',nf2:'This QR code is invalid or no longer in use. Please scan the code on the rower’s badge again.',
+        loading:'Loading…',retry:'Try again',net:'Connection problem',net2:'Please check your internet connection and try again.',missing:'Please rate every aspect.',dup:'You have already rated this rower. Thank you!',fail:'Could not submit. Please check your connection and try again.',
+        rate:['Very poor','Poor','Average','Good','Excellent']}
+  };
+  var CRIT_TEXT = {
+    thaido:{vi:['Thái độ phục vụ','Niềm nở, lịch sự, tôn trọng du khách'],en:['Attitude','Friendly, polite and respectful']},
+    antoan:{vi:['An toàn','Nhắc mặc áo phao, chèo vững, đúng số người'],en:['Safety','Life jackets, steady rowing, proper load']},
+    minhbach:{vi:['Minh bạch','Không đòi tiền boa, không ép mua hàng'],en:['Honesty','No tip requests or sales pressure']},
+    thuyetminh:{vi:['Hướng dẫn, thuyết minh','Giới thiệu hang động, đền và điểm dừng'],en:['Guidance','Explains caves, temples and stops']},
+    lotrinh:{vi:['Đúng lộ trình, thời gian','Không cắt tuyến, không đi vội'],en:['Route & timing','Full route, unhurried pace']},
+    vesinh:{vi:['Vệ sinh, môi trường','Đò sạch, giữ gìn cảnh quan'],en:['Cleanliness','Clean boat, respects nature']}
+  };
+
+  var CFG = window.TA_CONFIG || {};
+  var API = CFG.api || '';
+  var driver = { id: '', boat: '', team: '' };
+  var criteria = Object.keys(CRIT_TEXT).map(function(k){ return {key:k}; });
+  var params = new URLSearchParams(location.search);
+  var qid = (params.get('id') || '').trim().toUpperCase().slice(0, 32);
+
+  /* Gọi hệ thống: không gửi cookie Google (credentials:'omit') để tránh lỗi khi điện thoại đăng nhập nhiều tài khoản Google */
+  function api(body, tries){
+    tries = tries == null ? 1 : tries;
+    var ctl = ('AbortController' in window) ? new AbortController() : null;
+    var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 25000);
+    return fetch(API, { method:'POST', credentials:'omit', redirect:'follow', body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined })
+      .then(function(r){ clearTimeout(timer); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .catch(function(e){ clearTimeout(timer); if (tries > 0) return api(body, tries - 1); throw e; });
+  }
+
+  var lang = 'vi', scores = {}, tip = '';
+  try { var l0 = (navigator.language||'').toLowerCase(); if (l0 && l0.indexOf('vi') !== 0) lang = 'en'; } catch(e){}
+
+  var $ = function(id){ return document.getElementById(id); };
+  var star = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 6 6.5.8-4.8 4.5 1.2 6.5L12 17.3l-5.8 3.1 1.2-6.5L2.6 9.4l6.5-.8z"/></svg>';
+
+  function deviceId(){
+    try {
+      var k = 'ta_dev', v = localStorage.getItem(k);
+      if (!v) { v = (Date.now().toString(36) + Math.random().toString(36).slice(2,10)); localStorage.setItem(k, v); }
+      return v;
+    } catch(e){ return ''; }
+  }
+
+  function buildCriteria(){
+    var box = $('criteria'); box.innerHTML = '';
+    criteria.forEach(function(c){
+      var tx = (CRIT_TEXT[c.key]||{})[lang] || [c.label||c.key,''];
+      var row = document.createElement('div'); row.className = 'crit'; row.dataset.key = c.key;
+      row.innerHTML = '<div class="lbl"></div><div class="hint"></div><div class="stars" role="radiogroup"></div>';
+      row.querySelector('.lbl').textContent = tx[0];
+      row.querySelector('.hint').textContent = tx[1];
+      row.querySelector('.stars').setAttribute('aria-label', tx[0]);
+      for (var i=1;i<=5;i++){
+        var b = document.createElement('button'); b.type='button'; b.innerHTML = star;
+        b.setAttribute('role','radio'); b.setAttribute('aria-label', i + ' – ' + T[lang].rate[i-1]);
+        b.dataset.v = i; row.querySelector('.stars').appendChild(b);
+      }
+      box.appendChild(row);
+      paint(row);
+    });
+  }
+  function paint(row){
+    var v = scores[row.dataset.key] || 0;
+    row.querySelectorAll('.stars button').forEach(function(b){
+      var on = +b.dataset.v <= v; b.classList.toggle('on', on); b.setAttribute('aria-checked', +b.dataset.v === v);
+    });
+  }
+  $('criteria').addEventListener('click', function(e){
+    var b = e.target.closest('.stars button'); if (!b) return;
+    var row = b.closest('.crit'); scores[row.dataset.key] = +b.dataset.v;
+    row.classList.remove('missing'); paint(row); $('err').textContent = '';
+  });
+
+  document.querySelectorAll('.yn button').forEach(function(b){
+    b.addEventListener('click', function(){
+      tip = tip === b.dataset.tip ? '' : b.dataset.tip;
+      document.querySelectorAll('.yn button').forEach(function(x){ x.classList.toggle('on', x.dataset.tip === tip); });
+    });
+  });
+  $('comment').addEventListener('input', function(){ $('cnt').textContent = this.value.length; });
+
+  function applyLang(){
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-t]').forEach(function(el){ var v = T[lang][el.dataset.t]; if (v) el.textContent = v; });
+    document.querySelectorAll('[data-tp]').forEach(function(el){ el.placeholder = T[lang][el.dataset.tp]; });
+    document.querySelectorAll('.lang button').forEach(function(b){ b.classList.toggle('on', b.dataset.lang === lang); });
+    $('dId').textContent = driver.id || '—';
+    $('dMeta').textContent = driver.boat ? (T[lang].boat + ' ' + driver.boat + (driver.team ? ' · ' + driver.team : '')) : '';
+    buildCriteria();
+  }
+  document.querySelectorAll('.lang button').forEach(function(b){
+    b.addEventListener('click', function(){ lang = b.dataset.lang; applyLang(); });
+  });
+
+  function show(view){ ['loadView','formView','doneView','errView'].forEach(function(v){ $(v).classList.toggle('hidden', v !== view); }); window.scrollTo(0,0); }
+
+  $('submit').addEventListener('click', function(){
+    var missing = criteria.filter(function(c){ return !scores[c.key]; });
+    document.querySelectorAll('.crit').forEach(function(r){ r.classList.toggle('missing', !scores[r.dataset.key]); });
+    if (missing.length){
+      $('err').textContent = T[lang].missing;
+      document.querySelector('.crit.missing').scrollIntoView({behavior:'smooth',block:'center'});
+      return;
+    }
+    var payload = { id: driver.id, scores: scores, tip: tip, comment: $('comment').value, lang: lang, device: deviceId() };
+    var btn = $('submit'); btn.disabled = true; btn.textContent = T[lang].sending; $('err').textContent = '';
+
+    api({ action:'pub_rate', payload: payload }, 0).then(function(res){
+      if (res && res.ok) { show('doneView'); return; }
+      btn.disabled = false; btn.textContent = T[lang].send;
+      var m = String(res && res.error || '');
+      if (m.indexOf('DUPLICATE') >= 0) { $('err').textContent = T[lang].dup; return; }
+      $('err').textContent = /Vui lòng|Không tìm/.test(m) && lang === 'vi' ? m : T[lang].fail;
+    }).catch(function(){
+      btn.disabled = false; btn.textContent = T[lang].send; $('err').textContent = T[lang].fail;
+    });
+  });
+
+  function showErr(kind){
+    var L = T[lang];
+    if (kind === 'net') { $('errTitle').textContent = L.net; $('errText').textContent = L.net2; $('retry').style.display = ''; }
+    else { $('errTitle').textContent = L.nf; $('errText').textContent = L.nf2; $('retry').style.display = 'none'; }
+    show('errView');
+  }
+  var lastErr = '';
+  function load(){
+    show('loadView');
+    if (API && !qid) { location.replace('danhba.html'); return; }
+    if (!API) { lastErr = 'nf'; showErr('nf'); return; }
+    api({ action:'pub_driver', id: qid }).then(function(res){
+      if (!res || !res.ok) { lastErr = 'nf'; showErr('nf'); return; }
+      driver = res.driver;
+      if (res.criteria && res.criteria.length) criteria = res.criteria;
+      lastErr = ''; applyLang(); show('formView');
+    }).catch(function(){ lastErr = 'net'; showErr('net'); });
+  }
+  $('retry').addEventListener('click', load);
+  document.querySelectorAll('.lang button').forEach(function(b){
+    b.addEventListener('click', function(){ if (lastErr) showErr(lastErr); });
+  });
+
+  applyLang();
+  load();
+})();
+</script>
+</body>
+</html>
