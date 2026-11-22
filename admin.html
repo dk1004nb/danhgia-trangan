@@ -154,6 +154,9 @@
   <nav><div class="in" id="tabs">
     <button data-v="ov" class="on">Tổng quan</button>
     <button data-v="rt">Đánh giá</button>
+    <button data-v="dr">Người lái đò</button>
+    <button data-v="pr">In thẻ &amp; QR</button>
+    <button data-v="rp">Báo cáo</button>
     <button data-v="us" data-need="admin">Tài khoản</button>
     <button data-v="lg" data-need="kiemduyet">Nhật ký</button>
     <button data-v="st" data-need="admin">Cài đặt</button>
@@ -191,6 +194,9 @@
       <div class="pager" id="pager"></div>
       <div class="bulk hidden" id="bulk"></div>
     </section>
+    <section id="pDr" class="hidden"></section>
+    <section id="pPr" class="hidden"></section>
+    <section id="pRp" class="hidden"></section>
     <section id="pUs" class="hidden"></section>
     <section id="pLg" class="hidden"></section>
     <section id="pSt" class="hidden"></section>
@@ -272,7 +278,7 @@
   }
 
   /* ---------- điều hướng ---------- */
-  var PANES = { ov: 'pOv', rt: 'pRt', us: 'pUs', lg: 'pLg', st: 'pSt' };
+  var PANES = { ov: 'pOv', rt: 'pRt', dr: 'pDr', pr: 'pPr', rp: 'pRp', us: 'pUs', lg: 'pLg', st: 'pSt' };
   function go(v) {
     Array.prototype.forEach.call(document.querySelectorAll('#tabs button'), function (b) { b.classList.toggle('on', b.dataset.v === v); });
     for (var k in PANES) $(PANES[k]).classList.toggle('hidden', k !== v);
@@ -281,6 +287,9 @@
     if (v === 'us') loadUs();
     if (v === 'lg') loadLg();
     if (v === 'st') loadSt();
+    var tool = (window.TA_TOOLS || {})[v];
+    if (tool) tool();
+    else if (PANES[v] && !$(PANES[v]).innerHTML && /^(dr|pr|rp)$/.test(v)) $(PANES[v]).innerHTML = '<div class="err">Chưa tải được mô-đun công cụ (admin-tools.js). Kiểm tra mạng rồi tải lại trang.</div>';
   }
   $('tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) go(b.dataset.v); });
 
@@ -519,7 +528,16 @@
         '<label class="f">Đường dây nóng hiển thị cho du khách</label><input class="i" id="sHot" value="' + esc(s.hotline) + '">' +
         '<label class="f">Địa chỉ trang công khai</label><input class="i" id="sSite" value="' + esc(s.siteUrl) + '" placeholder="https://alhd.asia/">' +
         '<div class="muted" style="font-size:12px;margin-top:4px">Đổi địa chỉ này sẽ cập nhật cột link trong bảng tính; cần in lại thẻ QR nếu địa chỉ thay đổi.</div>' +
-        '<div class="err hidden" id="sErr"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn pri" id="sSave">Lưu cài đặt</button></div></div>';
+        '<div class="err hidden" id="sErr"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn pri" id="sSave">Lưu cài đặt</button></div></div>' +
+        '<div class="card" style="max-width:560px"><h3>Email nhận cảnh báo</h3><p class="muted" style="font-size:13px;margin:0 0 8px">Gửi ngay khi có đánh giá thấp (≤ 2,5) hoặc phản ánh xin tiền / ép mua. Nhiều email cách nhau bằng dấu phẩy; để trống để tắt.</p>' +
+        '<input class="i" id="aMail" placeholder="truongben@gmail.com, lanhdao@gmail.com"><div class="err hidden" id="aErr"></div>' +
+        '<div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn pri" id="aSave">Lưu email</button></div></div>';
+      api({ action: 'adm_alert' }).then(function (a) { $('aMail').value = a.email; }).catch(function () {});
+      $('aSave').onclick = function () {
+        var b = this; b.disabled = true; $('aErr').classList.add('hidden');
+        api({ action: 'adm_alert', email: $('aMail').value }).then(function (a) { $('aMail').value = a.email; toast(a.email ? 'Đã lưu email cảnh báo.' : 'Đã tắt email cảnh báo.'); })
+          .catch(function (e) { $('aErr').textContent = e.message; $('aErr').classList.remove('hidden'); }).then(function () { b.disabled = false; });
+      };
       $('sSave').onclick = function () {
         var b = this; b.disabled = true; $('sErr').classList.add('hidden');
         api({ action: 'adm_settings', settings: { showName: $('sShow').checked, minRatings: $('sMin').value, days: $('sDays').value, hotline: $('sHot').value, siteUrl: $('sSite').value.trim() } })
@@ -544,6 +562,10 @@
   }
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
+  /* ---------- dùng chung cho mô-đun công cụ (admin-tools.js) ---------- */
+  window.TA = { api: api, S: S, $: $, esc: esc, fmt: fmt, dt: dt, can: can, fold: fold, toast: toast,
+                modal: modal, closeModal: closeModal, showErr: showErr, confirmBox: confirmBox };
+
   /* ---------- khởi động ---------- */
   if (!API || /__API_URL__/.test(API)) { showLogin('Chưa cấu hình địa chỉ máy chủ (config.js).'); return; }
   var saved = null; try { saved = sessionStorage.getItem(TK); } catch (e) {}
@@ -553,5 +575,6 @@
   } else showLogin('');
 })();
 </script>
+<script src="admin-tools.js"></script>
 </body>
 </html>
