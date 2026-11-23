@@ -31,7 +31,7 @@
   function busy(el, on) { if (el) { el.disabled = on; } }
   function loadDrivers(force) {
     if (D.list && !force) return Promise.resolve(D);
-    return api({ action: 'adm_drivers' }).then(function (j) { D.list = j.drivers; D.ver = j.ver; D.base = j.siteUrl || ''; return D; });
+    return api({ action: 'adm_drivers' }).then(function (j) { D.list = j.drivers; D.ver = j.ver; D.base = j.siteUrl || ''; D.prof = j.profiles || {}; return D; });
   }
   function saveDrivers(list, msg) {
     return api({ action: 'adm_drivers_save', drivers: list, ver: D.ver }).then(function (j) {
@@ -126,6 +126,7 @@
       var id = b.closest('tr').dataset.id, d = D.list.filter(function (x) { return x.id === id; })[0];
       if (b.dataset.a === 'qr') showQr(d.id + (d.name ? ' – ' + d.name : ''), 'Mã QR đánh giá riêng của người lái đò' + (d.boat ? ' – đò số ' + d.boat : '') + '.', linkOf(d.id), 'qr_' + d.id);
       if (b.dataset.a === 'ed') driverForm(d);
+      if (b.dataset.a === 'pf') profileForm(d);
       if (b.dataset.a === 'tg') {
         var nl = D.list.map(function (x) { return x.id === id ? Object.assign({}, x, { status: x.status === 'Nghỉ' ? 'Hoạt động' : 'Nghỉ' }) : x; });
         b.disabled = true;
@@ -145,9 +146,10 @@
     var adm = T.can('admin'), rows = filtered();
     $('dCount').textContent = 'Hiển thị ' + rows.length + '/' + D.list.length + ' người';
     $('dBody').innerHTML = rows.length ? rows.map(function (d) {
-      return '<tr data-id="' + esc(d.id) + '"><td><b>' + esc(d.id) + '</b></td><td>' + esc(d.name) + '</td><td>' + esc(d.boat) + '</td><td>' + esc(d.team) + '</td>' +
+      var pf = (D.prof || {})[d.id];
+      return '<tr data-id="' + esc(d.id) + '"><td><b>' + esc(d.id) + '</b></td><td><span class="pfn">' + (pf && pf.thumb ? '<img class="pfa" alt="" src="' + esc(pf.thumb) + '">' : '<span class="pfa"></span>') + '<span>' + esc(d.name) + (pf ? (pf.consent ? ' <span class="pill g" title="Hồ sơ đang công khai">Hồ sơ</span>' : ' <span class="pill y" title="Có hồ sơ nhưng chưa đồng ý công khai">Hồ sơ ẩn</span>') : '') + '</span></span></td><td>' + esc(d.boat) + '</td><td>' + esc(d.team) + '</td>' +
         '<td>' + (d.status === 'Nghỉ' ? '<span class="pill k">Nghỉ</span>' : '<span class="pill g">Hoạt động</span>') + '</td>' +
-        '<td class="n"><button class="btn sm" data-a="qr">QR</button> ' + (adm ? '<button class="btn sm" data-a="ed">Sửa</button> <button class="btn sm" data-a="tg">' + (d.status === 'Nghỉ' ? 'Kích hoạt' : 'Cho nghỉ') + '</button> <button class="btn sm danger" data-a="rm">Xóa</button>' : '') + '</td></tr>';
+        '<td class="n"><button class="btn sm" data-a="qr">QR</button> <button class="btn sm" data-a="pf">Hồ sơ</button> ' + (adm ? '<button class="btn sm" data-a="ed">Sửa</button> <button class="btn sm" data-a="tg">' + (d.status === 'Nghỉ' ? 'Kích hoạt' : 'Cho nghỉ') + '</button> <button class="btn sm danger" data-a="rm">Xóa</button>' : '') + '</td></tr>';
     }).join('') : '<tr><td colspan="6" class="empty">Chưa có người lái đò nào' + (adm && !D.list.length ? ' – bấm "+ Thêm người" hoặc "Nhập từ Excel".' : '.') + '</td></tr>';
   }
   function cleanId(v) { return String(v == null ? '' : v).trim().toUpperCase(); }
@@ -177,6 +179,73 @@
       saveDrivers(nl, (isNew ? 'Đã thêm ' : 'Đã lưu ') + x.id + '.').then(function () { T.closeModal(); renderDr(); })
         .catch(function (e) { T.showErr(e.message); b.disabled = false; });
     };
+  }
+
+  /* ----- Hồ sơ công khai (ảnh, ngày sinh, sở trường, kinh nghiệm) ----- */
+  function loadImg(file) {
+    return new Promise(function (ok, no) {
+      if (!/^image\//.test(file.type)) { no(new Error('Hãy chọn một tệp ảnh (JPG, PNG, HEIC…).')); return; }
+      var u = URL.createObjectURL(file), im = new Image();
+      im.onload = function () { ok(im); setTimeout(function () { URL.revokeObjectURL(u); }, 1000); };
+      im.onerror = function () { URL.revokeObjectURL(u); no(new Error('Trình duyệt không đọc được ảnh này. Hãy chụp màn hình ảnh hoặc chuyển sang JPG rồi chọn lại.')); };
+      im.src = u;
+    });
+  }
+  // cắt vuông ở giữa (lệch lên trên một chút để giữ khuôn mặt), nén JPEG đến khi vừa giới hạn lưu trữ
+  function squareJpeg(im, size, max) {
+    var w = im.naturalWidth, h = im.naturalHeight, s = Math.min(w, h), sx = (w - s) / 2, sy = h > w ? (h - s) * 0.3 : 0;
+    var c = document.createElement('canvas'); c.width = c.height = size;
+    var g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, size, size); g.imageSmoothingQuality = 'high';
+    g.drawImage(im, sx, sy, s, s, 0, 0, size, size);
+    for (var q = 0.86; q >= 0.3; q -= 0.08) { var u = c.toDataURL('image/jpeg', q); if (u.length <= max) return u; }
+    throw new Error('Ảnh quá phức tạp, không nén được. Hãy chọn ảnh khác.');
+  }
+  function hosoLink(id) { return siteBase() + 'hoso.html?id=' + encodeURIComponent(id); }
+  function profileForm(d) {
+    var adm = T.can('admin');
+    T.modal('<h3>Hồ sơ ' + esc(d.id) + (d.name ? ' – ' + esc(d.name) : '') + '</h3><div class="loading"><span class="spin"></span>Đang tải…</div>');
+    api({ action: 'adm_profile_get', id: d.id }).then(function (j) {
+      var p = j.profile, photo = null, rm = false, ro = adm ? '' : ' disabled';
+      var y = new Date().getFullYear();
+      T.modal('<h3>Hồ sơ ' + esc(d.id) + (d.name ? ' – ' + esc(d.name) : '') + '</h3>' +
+        '<div class="pfh"><div class="pfp" id="pfPic">' + (p.photo ? '<img alt="" src="' + esc(p.photo) + '">' : '<span>Chưa có ảnh</span>') + '</div>' +
+          '<div style="flex:1;min-width:0"><div class="muted" style="font-size:12.5px;margin-bottom:8px">Ảnh chân dung rõ mặt, nền sáng. Ảnh được cắt vuông và nén nhỏ ngay trên máy này trước khi gửi.</div>' +
+          (adm ? '<label class="btn sm" style="cursor:pointer">Chọn ảnh…<input type="file" id="pfFile" accept="image/*" hidden></label> <button class="btn sm danger" id="pfRm"' + (p.photo ? '' : ' hidden') + '>Xóa ảnh</button>' : '') +
+        '</div></div>' +
+        '<div class="row" style="gap:10px"><div style="flex:1;min-width:150px"><label class="f">Ngày tháng năm sinh</label><input class="i" type="date" id="pfDob" min="' + (y - 90) + '-01-01" max="' + (y - 15) + '-12-31" value="' + esc(p.dob) + '"' + ro + '></div>' +
+        '<div style="flex:1;min-width:120px"><label class="f">Năm bắt đầu chèo đò</label><input class="i" type="number" id="pfStart" min="1950" max="' + y + '" placeholder="VD: 2008" value="' + esc(p.start) + '"' + ro + '></div></div>' +
+        '<label class="f">Sở trường <span class="muted" id="pfSkC"></span></label><input class="i" id="pfSkill" maxlength="300" placeholder="VD: Thuyết minh tiếng Anh, am hiểu lịch sử cố đô Hoa Lư, chụp ảnh đẹp cho khách" value="' + esc(p.skill) + '"' + ro + '>' +
+        '<label class="f">Kinh nghiệm <span class="muted" id="pfExC"></span></label><textarea class="i" id="pfExp" rows="4" maxlength="1000" placeholder="VD: 15 năm chèo đò tuyến Tràng An 1, từng được khen thưởng…"' + ro + '>' + esc(p.exp) + '</textarea>' +
+        '<label class="pfc"><input type="checkbox" id="pfOk"' + (p.consent ? ' checked' : '') + ro + '> <span><b>Người lái đò đã đồng ý công khai</b> các thông tin trên (gồm ảnh và ngày sinh) trên trang đánh giá. Nên có bản đồng ý ký tên lưu tại Ban quản lý. Bỏ chọn bất cứ lúc nào để ngừng công khai.</span></label>' +
+        (p.updated ? '<div class="muted" style="font-size:12px;margin-top:6px">Cập nhật ' + esc(T.dt(p.updated)) + (p.by ? ' bởi ' + esc(p.by) : '') + '</div>' : '') +
+        (p.consent && d.status !== 'Nghỉ' ? '<div style="margin-top:8px;font-size:13px"><a href="' + esc(hosoLink(d.id)) + '" target="_blank" rel="noopener">Xem trang hồ sơ công khai ↗</a></div>' : '') +
+        '<div class="err hidden" id="mErr"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn" data-x>' + (adm ? 'Hủy' : 'Đóng') + '</button>' + (adm ? '<button class="btn pri" id="mOk">Lưu hồ sơ</button>' : '') + '</div>');
+      function cnt() { $('pfSkC').textContent = '(' + $('pfSkill').value.length + '/300)'; $('pfExC').textContent = '(' + $('pfExp').value.length + '/1000)'; }
+      cnt(); $('pfSkill').oninput = cnt; $('pfExp').oninput = cnt;
+      if (!adm) return;
+      $('pfFile').onchange = function () {
+        var f = this.files[0]; this.value = ''; if (!f) return;
+        $('pfPic').innerHTML = '<span class="spin"></span>';
+        loadImg(f).then(function (im) {
+          if (Math.min(im.naturalWidth, im.naturalHeight) < 120) throw new Error('Ảnh quá nhỏ (cần tối thiểu 120×120 điểm ảnh).');
+          photo = { photo: squareJpeg(im, 320, 46000), thumb: squareJpeg(im, 96, 11000) }; rm = false;
+          $('pfPic').innerHTML = '<img alt="" src="' + photo.photo + '">'; $('pfRm').hidden = false;
+        }).catch(function (e) { $('pfPic').innerHTML = p.photo && !rm ? '<img alt="" src="' + esc(p.photo) + '">' : '<span>Chưa có ảnh</span>'; T.showErr(e.message); });
+      };
+      $('pfRm').onclick = function () { photo = null; rm = true; this.hidden = true; $('pfPic').innerHTML = '<span>Chưa có ảnh</span>'; };
+      $('mOk').onclick = function () {
+        var x = { id: d.id, dob: $('pfDob').value, start: $('pfStart').value, skill: $('pfSkill').value.trim(), exp: $('pfExp').value.trim(), consent: $('pfOk').checked, removePhoto: rm };
+        if (photo) { x.photo = photo.photo; x.thumb = photo.thumb; }
+        if (x.consent && !x.skill && !x.exp && !photo && (rm || !p.photo)) { T.showErr('Hồ sơ còn trống – hãy nhập ít nhất sở trường, kinh nghiệm hoặc ảnh trước khi công khai.'); return; }
+        var b = this; b.disabled = true;
+        api({ action: 'adm_profile_save', profile: x }).then(function (r) {
+          D.prof = D.prof || {};
+          D.prof[d.id] = { consent: r.profile.consent, thumb: r.profile.thumb };
+          T.closeModal(); drawDrRows();
+          T.toast('Đã lưu hồ sơ ' + d.id + (r.profile.consent ? ' – đang công khai.' : ' – chưa công khai.'));
+        }).catch(function (e) { T.showErr(e.message); b.disabled = false; });
+      };
+    }).catch(function (e) { T.modal('<h3>Hồ sơ ' + esc(d.id) + '</h3><div class="err">' + esc(e.message) + '</div><div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn" data-x>Đóng</button></div>'); });
   }
 
   /* ----- Nhập từ Excel / CSV (đọc ngay trên trình duyệt, không tải file lên máy chủ) ----- */
