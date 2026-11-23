@@ -75,6 +75,14 @@
   .pill.y{background:var(--amber-bg);color:#8a5a00}
   .pill.r{background:var(--red-bg);color:var(--red)}
   .pill.k{background:#eceae4;color:#666}
+  /* hồ sơ */
+  .pfn{display:inline-flex;align-items:center;gap:8px}
+  .pfa{width:28px;height:28px;border-radius:50%;object-fit:cover;background:#eceae4;flex:none;display:inline-block}
+  .pfh{display:flex;gap:14px;align-items:center;margin:4px 0 6px}
+  .pfp{width:96px;height:96px;border-radius:14px;overflow:hidden;background:#eceae4;display:flex;align-items:center;justify-content:center;flex:none;font-size:12px;color:#777;text-align:center}
+  .pfp img{width:100%;height:100%;object-fit:cover}
+  .pfc{display:flex;gap:8px;align-items:flex-start;margin-top:12px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:13.5px;line-height:1.45;cursor:pointer}
+  .pfc input{margin-top:3px;width:18px;height:18px;flex:none}
   /* ratings */
   .filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
   .filters .i{font-size:14px;padding:8px 10px}
@@ -523,6 +531,7 @@
       var s = j.settings;
       $('pSt').innerHTML = '<div class="card" style="max-width:560px"><h3>Cài đặt danh bạ công khai (mã QR tổng)</h3>' +
         '<label class="chk"><input type="checkbox" id="sShow"' + (s.showName ? ' checked' : '') + '> Hiển thị họ tên người lái đò</label>' +
+        '<label class="f">Ngày sinh trên hồ sơ công khai</label><select class="i" id="sDob">' + [['full', 'Hiện đầy đủ ngày/tháng/năm'], ['year', 'Chỉ hiện năm sinh'], ['hide', 'Không hiện']].map(function (o) { return '<option value="' + o[0] + '"' + ((s.dob || 'full') === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>' +
         '<label class="f">Số lượt tối thiểu để hiện điểm</label><input class="i" id="sMin" type="number" min="1" max="100" value="' + s.minRatings + '">' +
         '<label class="f">Tính điểm trong bao nhiêu ngày gần nhất (0 = toàn bộ)</label><input class="i" id="sDays" type="number" min="0" max="3650" value="' + s.days + '">' +
         '<label class="f">Đường dây nóng hiển thị cho du khách</label><input class="i" id="sHot" value="' + esc(s.hotline) + '">' +
@@ -540,7 +549,7 @@
       };
       $('sSave').onclick = function () {
         var b = this; b.disabled = true; $('sErr').classList.add('hidden');
-        api({ action: 'adm_settings', settings: { showName: $('sShow').checked, minRatings: $('sMin').value, days: $('sDays').value, hotline: $('sHot').value, siteUrl: $('sSite').value.trim() } })
+        api({ action: 'adm_settings', settings: { showName: $('sShow').checked, minRatings: $('sMin').value, days: $('sDays').value, hotline: $('sHot').value, siteUrl: $('sSite').value.trim(), dob: $('sDob').value } })
           .then(function () { toast('Đã lưu cài đặt.'); }).catch(function (e) { $('sErr').textContent = e.message; $('sErr').classList.remove('hidden'); })
           .then(function () { b.disabled = false; });
       };
