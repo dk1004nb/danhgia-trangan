@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Hồ sơ người lái đò – Tràng An</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#1d2a24;--muted:#5d6b64;--line:#e3ddd0;--bg:#f5f1e8;--card:#fffdf8;--green:#1f4d3a;--green-2:#2f6b52;--water:#3f8f86;--gold:#e3a51f;--red:#b3402f}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:'Be Vietnam Pro',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+  header{background:var(--green);color:#fff;padding:20px 16px 60px;position:relative;overflow:hidden}
+  header svg.hills{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:48px}
+  .top{max-width:560px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .brand small{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+  .brand h1{margin:4px 0 0;font-size:22px;font-weight:700;line-height:1.25}
+  .lang{display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:3px;flex:none}
+  .lang button{border:0;background:none;color:#fff;font:600 12px inherit;font-family:inherit;padding:6px 10px;border-radius:999px;cursor:pointer}
+  .lang button.on{background:#fff;color:var(--green)}
+  main{max-width:560px;margin:0 auto;padding:0 16px 40px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;margin:0 0 12px;box-shadow:0 6px 20px rgba(31,77,58,.06)}
+  .card.first{margin-top:-44px;position:relative;text-align:center}
+  .card.first.wp{margin-top:62px}
+  .pic{width:132px;height:132px;border-radius:50%;margin:-62px auto 10px;border:4px solid var(--card);background:#e7f1ee;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(31,77,58,.15)}
+  .pic img{width:100%;height:100%;object-fit:cover;display:block}
+  .first .pic.nophoto{margin-top:0}
+  .nm{font-size:22px;font-weight:700;margin:2px 0 4px;line-height:1.3}
+  .sub{color:var(--muted);font-size:14px}
+  .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;margin-top:14px;text-align:center}
+  .fact{background:#f2efe6;border-radius:12px;padding:10px 8px}
+  .fact .v{font-size:17px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums}
+  .fact .l{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.3}
+  h2{font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:var(--green-2);margin:0 0 8px}
+  .txt{font-size:15px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word;margin:0}
+  .score{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .score .big{font-size:34px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px}
+  .score .big svg{width:26px;height:26px;fill:var(--gold)}
+  .score .n{font-size:13px;color:var(--muted);line-height:1.4}
+  .cb{margin-top:10px}
+  .cb .r{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:4px}
+  .cb .r b{font-variant-numeric:tabular-nums}
+  .bar{height:7px;background:#ece6d8;border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--water);border-radius:99px}
+  .muted{color:var(--muted);font-size:14px;line-height:1.55}
+  .btns{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+  .btn{display:block;text-align:center;text-decoration:none;border-radius:14px;padding:14px;font-weight:700;font-size:16px}
+  .btn.pri{background:var(--green);color:#fff}
+  .btn.sec{background:#fff;border:1.5px solid var(--line);color:var(--green)}
+  footer{margin-top:18px;font-size:13px;color:var(--muted);line-height:1.6}
+  footer .hot{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;color:var(--ink)}
+  footer .hot a{color:var(--green);font-weight:700;text-decoration:none}
+  .loading{text-align:center;padding:40px 12px;color:var(--muted)}
+  .spin{width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--green);border-radius:50%;margin:0 auto 12px;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .retry{display:inline-block;margin-top:12px;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 16px;font:600 14px inherit;font-family:inherit;color:var(--green);cursor:pointer}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<script src="config.js"></script>
+
+<header>
+  <div class="top">
+    <div class="brand"><small data-t="site">Khu du lịch sinh thái Tràng An</small><h1 data-t="title">Hồ sơ người lái đò</h1></div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="vi" class="on">VI</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+  </div>
+  <svg class="hills" viewBox="0 0 400 48" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 48 L0 30 Q30 4 55 26 Q70 10 92 24 Q120 0 150 28 Q175 12 200 30 Q230 2 262 26 Q285 14 305 28 Q335 6 365 26 Q385 16 400 22 L400 48 Z" fill="#2f6b52" opacity=".55"/>
+    <path d="M0 48 L0 40 Q60 30 120 40 T240 40 T400 38 L400 48 Z" fill="#f5f1e8"/>
+  </svg>
+</header>
+
+<main id="main"><div class="card first"><div class="loading"><div class="spin"></div><span id="loadTxt">Đang tải…</span></div></div></main>
+
+<script>
+(function(){
+  var T = {
+    vi:{site:'Khu du lịch sinh thái Tràng An',title:'Hồ sơ người lái đò',rower:'Người lái đò',boat:'Đò số',
+        dob:'Ngày sinh',yob:'Năm sinh',age:function(n){return n+' tuổi';},years:function(n){return n<1?'Dưới 1 năm':n+' năm';},yearsL:'Kinh nghiệm chèo đò',since:function(y){return 'Từ năm '+y;},team:'Tổ',
+        skill:'Sở trường',exp:'Kinh nghiệm',ratings:'Đánh giá của du khách',ratingsN:function(n,s){return n.toLocaleString('vi-VN')+' lượt đánh giá'+(s.days?' trong '+s.days+' ngày gần nhất':'');},
+        notEnough:function(n,s){return 'Chưa đủ số lượt đánh giá để hiện điểm ('+n+'/'+s.min+' lượt'+(s.days?' trong '+s.days+' ngày':'')+').';},
+        noProfile:'Người lái đò này chưa công khai hồ sơ cá nhân.',viNote:'Thông tin do Ban quản lý cập nhật, viết bằng tiếng Việt.',
+        rate:'Đánh giá người lái đò này',all:'Xem toàn bộ đội ngũ',hot:'Phản ánh, góp ý về chất lượng dịch vụ:',
+        crit:{thaido:'Thái độ phục vụ',antoan:'An toàn',minhbach:'Minh bạch (không đòi boa, ép mua)',thuyetminh:'Hướng dẫn, thuyết minh',lotrinh:'Đúng lộ trình, thời gian',vesinh:'Vệ sinh, môi trường'},
+        nf:'Không tìm thấy người lái đò',nf2:'Mã số không đúng hoặc người lái đò đã ngừng hoạt động.',
+        loading:'Đang tải…',net:'Không tải được dữ liệu. Vui lòng kiểm tra kết nối mạng.',retry:'Thử lại'},
+    en:{site:'Trang An Scenic Landscape Complex',title:'Boat rower profile',rower:'Boat rower',boat:'Boat no.',
+        dob:'Date of birth',yob:'Year of birth',age:function(n){return n+' years old';},years:function(n){return n<1?'Under 1 year':n+(n===1?' year':' years');},yearsL:'Rowing experience',since:function(y){return 'Since '+y;},team:'Team',
+        skill:'Strengths',exp:'Experience',ratings:'Visitor ratings',ratingsN:function(n,s){return n.toLocaleString('en-US')+' ratings'+(s.days?' in the last '+s.days+' days':'');},
+        notEnough:function(n,s){return 'Not enough ratings to show a score yet ('+n+'/'+s.min+(s.days?' in the last '+s.days+' days':'')+').';},
+        noProfile:'This rower has not published a personal profile.',viNote:'Profile written in Vietnamese by the site management.',
+        rate:'Rate this rower',all:'See all boat rowers',hot:'Service feedback hotline:',
+        crit:{thaido:'Attitude',antoan:'Safety',minhbach:'Honesty (no tips, no sales pressure)',thuyetminh:'Guidance',lotrinh:'Route & timing',vesinh:'Cleanliness'},
+        nf:'Rower not found',nf2:'The ID is incorrect or this rower is no longer active.',
+        loading:'Loading…',net:'Could not load data. Please check your connection.',retry:'Try again'}
+  };
+  var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 6 6.5.8-4.8 4.5 1.2 6.5L12 17.3l-5.8 3.1 1.2-6.5L2.6 9.4l6.5-.8z"/></svg>';
+  var BOAT = '<svg width="54" height="54" viewBox="0 0 34 34" aria-hidden="true"><path d="M3 20h28l-4 6H7z" fill="#1f4d3a"/><path d="M17 6v13M17 6l7 10h-7" stroke="#3f8f86" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 29q4 2 8 0t8 0 8 0 8 0" stroke="#3f8f86" stroke-width="1.6" fill="none"/></svg>';
+  var API = (window.TA_CONFIG || {}).api || '';
+  var qid = (new URLSearchParams(location.search).get('id') || '').trim().slice(0, 40);
+  var lang = 'vi', res = null, err = '';
+  try { var l0 = (navigator.language||'').toLowerCase(); if (l0 && l0.indexOf('vi') !== 0) lang = 'en'; } catch(e){}
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function num(x){ return x==null?'–':x.toFixed(1).replace('.', lang==='vi'?',':'.'); }
+  function fmtDob(s){
+    if (/^\d{4}$/.test(s)) return { l: T[lang].yob, v: s, age: new Date().getFullYear() - (+s) };
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); if (!m) return null;
+    var now = new Date(), age = now.getFullYear() - (+m[1]); if (now.getMonth()+1 < +m[2] || (now.getMonth()+1 === +m[2] && now.getDate() < +m[3])) age--;
+    return { l: T[lang].dob, v: m[3]+'/'+m[2]+'/'+m[1], age: age };
+  }
+  function render(){
+    var L = T[lang];
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-t]').forEach(function(el){ var v = L[el.dataset.t]; if (typeof v === 'string') el.textContent = v; });
+    document.querySelectorAll('.lang button').forEach(function(b){ b.classList.toggle('on', b.dataset.lang === lang); });
+    if (err) {
+      $('main').innerHTML = '<div class="card first"><div class="loading">' + (err === 'nf'
+        ? '<b style="color:var(--ink);font-size:17px">'+esc(L.nf)+'</b><br>'+esc(L.nf2)+'<div class="btns" style="margin-top:16px"><a class="btn sec" href="danhba.html">'+esc(L.all)+'</a></div>'
+        : esc(L.net)+'<br><button type="button" class="retry" id="retryBtn">'+esc(L.retry)+'</button>') + '</div></div>';
+      if ($('retryBtn')) $('retryBtn').onclick = load;
+      return;
+    }
+    if (!res) { var lt = $('loadTxt'); if (lt) lt.textContent = L.loading; return; }
+    var d = res.driver, p = res.profile, st = res.stats, h = '';
+    var name = d.name || L.rower;
+    document.title = name + ' – ' + L.title;
+    h += '<div class="card first' + (p && p.photo ? ' wp" style="padding-top:0' : '') + '">';
+    h += p && p.photo ? '<div class="pic"><img alt="' + esc(name) + '" src="' + esc(p.photo) + '"></div>' : '<div class="pic nophoto">' + BOAT + '</div>';
+    h += '<div class="nm">' + esc(name) + '</div><div class="sub">' + esc([d.id, d.boat ? L.boat + ' ' + d.boat : '', d.team ? (/^t[oổ]/i.test(d.team) ? d.team : L.team + ' ' + d.team) : ''].filter(Boolean).join(' · ')) + '</div>';
+    var facts = [];
+    if (p) {
+      var b = fmtDob(p.dob); if (b) facts.push('<div class="fact"><div class="v">' + esc(b.v) + '</div><div class="l">' + esc(b.l) + (b.age > 0 && b.age < 120 ? ' · ' + esc(L.age(b.age)) : '') + '</div></div>');
+      if (p.start) facts.push('<div class="fact"><div class="v">' + esc(L.years(new Date().getFullYear() - p.start)) + '</div><div class="l">' + esc(L.yearsL) + ' · ' + esc(L.since(p.start)) + '</div></div>');
+    }
+    if (st.score != null) facts.push('<div class="fact"><div class="v">' + num(st.score) + ' ★</div><div class="l">' + esc(L.ratingsN(st.n, st)) + '</div></div>');
+    if (facts.length) h += '<div class="facts">' + facts.join('') + '</div>';
+    h += '</div>';
+    if (p && p.skill) h += '<div class="card"><h2>' + esc(L.skill) + '</h2><p class="txt">' + esc(p.skill) + '</p></div>';
+    if (p && p.exp) h += '<div class="card"><h2>' + esc(L.exp) + '</h2><p class="txt">' + esc(p.exp) + '</p></div>';
+    if (!p) h += '<div class="card"><p class="muted" style="margin:0">' + esc(L.noProfile) + '</p></div>';
+    else if (lang === 'en' && (p.skill || p.exp)) h += '<p class="muted" style="font-size:12.5px;margin:-4px 4px 12px">' + esc(L.viNote) + '</p>';
+    h += '<div class="card"><h2>' + esc(L.ratings) + '</h2>';
+    if (st.avgs) {
+      h += '<div class="score"><div class="big">' + STAR + num(st.score) + '</div><div class="n">' + esc(L.ratingsN(st.n, st)) + '</div></div>';
+      h += res.criteria.map(function(k, i){ var v = st.avgs[i]; return '<div class="cb"><div class="r"><span>' + esc(L.crit[k] || k) + '</span><b>' + num(v) + '</b></div><div class="bar"><i style="width:' + (v ? v / 5 * 100 : 0) + '%"></i></div></div>'; }).join('');
+    } else h += '<p class="muted" style="margin:0">' + esc(L.notEnough(st.n, st)) + '</p>';
+    h += '</div>';
+    h += '<div class="btns"><a class="btn pri" href="./?id=' + encodeURIComponent(d.id) + '">' + esc(L.rate) + '</a><a class="btn sec" href="danhba.html">' + esc(L.all) + '</a></div>';
+    if (res.hotline) { var tel = String(res.hotline).replace(/[^0-9+]/g, ''); h += '<footer><div class="hot">' + esc(L.hot) + ' ' + (tel ? '<a href="tel:' + esc(tel) + '">' + esc(res.hotline) + '</a>' : '<b>' + esc(res.hotline) + '</b>') + '</div></footer>'; }
+    $('main').innerHTML = h;
+  }
+  function load(){
+    err = ''; res = null;
+    $('main').innerHTML = '<div class="card first"><div class="loading"><div class="spin"></div><span id="loadTxt">' + T[lang].loading + '</span></div></div>';
+    if (!qid) { location.replace('danhba.html'); return; }
+    if (!API) { err = 'nf'; render(); return; }
+    fetch(API, { method:'POST', credentials:'omit', redirect:'follow', body: JSON.stringify({ action:'pub_profile', id: qid }) })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(j){ if (!j || !j.ok) { err = 'nf'; } else res = j; render(); })
+      .catch(function(){ err = 'net'; render(); });
+  }
+  document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click', function(){ lang = b.dataset.lang; render(); }); });
+  render(); load();
+})();
+</script>
+</body>
+</html>
