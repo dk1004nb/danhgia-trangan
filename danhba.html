@@ -42,6 +42,11 @@
   .av{width:46px;height:46px;border-radius:12px;background:#e7f1ee;color:var(--green);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;line-height:1}
   .av small{font-size:9px;letter-spacing:.06em;opacity:.7}
   .av b{font-size:15px;margin-top:2px}
+  .av.ph{padding:0;overflow:hidden;border-radius:50%}
+  .av.ph img{width:100%;height:100%;object-fit:cover;display:block}
+  .skl{font-size:13px;color:var(--ink);margin-top:10px;line-height:1.45}
+  .skl span{color:var(--muted)}
+  .plink{display:inline-block;margin-top:12px;font-size:14px;font-weight:600;color:var(--green);text-decoration:none;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff}
   .who{flex:1;min-width:0}
   .who .nm{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .who .meta{font-size:13px;color:var(--muted);margin-top:2px}
@@ -127,7 +132,7 @@
         intro:'Thông tin công khai về người lái đò và đánh giá của du khách. <b>Sau chuyến đi, hãy quét mã QR trên thẻ của người lái đò</b> để đánh giá – ý kiến của bạn giúp Tràng An phục vụ tốt hơn.',
         kN:'người lái đò',kAvg:'điểm trung bình',kTot:'lượt đánh giá',search:'Tìm theo mã số, số đò hoặc họ tên',
         allTeams:'Tất cả các tổ',sortId:'Sắp xếp: mã số',sortScore:'Điểm cao nhất',sortN:'Nhiều đánh giá nhất',sortBoat:'Số đò',
-        boat:'ĐÒ',rower:'Người lái đò',team:'',ratings:'lượt',notEnough:'Chưa đủ đánh giá',excellent:'Xuất sắc',
+        boat:'ĐÒ',rower:'Người lái đò',team:'',ratings:'lượt',notEnough:'Chưa đủ đánh giá',excellent:'Xuất sắc',skill:'Sở trường',profile:'Xem hồ sơ →',
         found:function(n,t){return 'Hiển thị '+n+' / '+t+' người lái đò';},more:function(n){return 'Xem thêm ('+n+')';},
         none:'Không tìm thấy người lái đò phù hợp.',
         hot:'Phản ánh, góp ý về chất lượng dịch vụ:',
@@ -138,7 +143,7 @@
         intro:'Public information about our boat rowers and visitor ratings. <b>After your trip, scan the QR code on your rower’s badge</b> to rate them – your feedback helps us serve you better.',
         kN:'rowers',kAvg:'average rating',kTot:'ratings',search:'Search by ID, boat number or name',
         allTeams:'All teams',sortId:'Sort: ID',sortScore:'Highest rated',sortN:'Most ratings',sortBoat:'Boat number',
-        boat:'BOAT',rower:'Boat rower',team:'',ratings:'ratings',notEnough:'Not enough ratings yet',excellent:'Excellent',
+        boat:'BOAT',rower:'Boat rower',team:'',ratings:'ratings',notEnough:'Not enough ratings yet',excellent:'Excellent',skill:'Strengths',profile:'View profile →',
         found:function(n,t){return 'Showing '+n+' of '+t+' rowers';},more:function(n){return 'Show more ('+n+')';},
         none:'No matching rowers found.',
         hot:'Service feedback hotline:',
@@ -155,7 +160,8 @@
     data = d; S = data.settings || S;
     drivers = data.drivers.map(function(r){
       return { id:r[0], name:r[1]||'', boat:r[2]||'', team:r[3]||'', n:r[4]||0, score:r[5], avgs:r[6],
-               key: fold(r[0]+' '+(r[1]||'')+' '+(r[2]||'')+' do '+(r[2]||'')) };
+               photo: /^data:image\/jpeg;base64,/.test(r[7]||'') ? r[7] : '', skill: r[8]||'', prof: !!r[9],
+               key: fold(r[0]+' '+(r[1]||'')+' '+(r[2]||'')+' do '+(r[2]||'')+' '+(r[8]||'')) };
     });
   }
   var lang = 'vi', q = '', team = '', sort = 'id', shown = PAGE, open = {};
@@ -192,16 +198,16 @@
       ? '<div class="v">'+STAR+num(d.score)+'</div><div class="n">'+d.n.toLocaleString('vi-VN')+' '+L.ratings+'</div>'
       : '<div class="na">'+L.notEnough+(d.n?' ('+d.n+')':'')+'</div>';
     var det = '';
-    if (d.avgs){
-      det = '<div class="detail">' + data.criteria.map(function(k,i){
+    if (d.avgs || d.prof){
+      det = '<div class="detail">' + (d.skill ? '<div class="skl"><span>'+L.skill+':</span> '+esc(d.skill)+'</div>' : '') + (d.avgs ? data.criteria.map(function(k,i){
         var v = d.avgs[i];
         return '<div class="cb"><div class="r"><span>'+esc(L.crit[k]||k)+'</span><b>'+num(v)+'</b></div><div class="bar"><i style="width:'+(v?v/5*100:0)+'%"></i></div></div>';
-      }).join('') + '</div>';
+      }).join('') : '') + (d.prof ? '<a class="plink" href="hoso.html?id='+encodeURIComponent(d.id)+'">'+L.profile+'</a>' : '') + '</div>';
     }
     return '<div class="item'+(open[d.id]?' open':'')+'" data-id="'+esc(d.id)+'">'
-      + '<button type="button" class="row"'+(d.avgs?' aria-expanded="'+(!!open[d.id])+'"':'')+'>'
-      + '<div class="av"><small>'+L.boat+'</small><b>'+esc(d.boat||'–')+'</b></div>'
-      + '<div class="who"><div class="nm">'+esc(name)+badge+'</div><div class="meta">'+esc(d.id)+(d.team?' · '+esc(d.team):'')+'</div></div>'
+      + '<button type="button" class="row"'+(det?' aria-expanded="'+(!!open[d.id])+'"':'')+'>'
+      + (d.photo ? '<div class="av ph"><img alt="" loading="lazy" src="'+esc(d.photo)+'"></div>' : '<div class="av"><small>'+L.boat+'</small><b>'+esc(d.boat||'–')+'</b></div>')
+      + '<div class="who"><div class="nm">'+esc(name)+badge+'</div><div class="meta">'+esc(d.id)+(d.photo&&d.boat?' · '+L.boat.charAt(0)+L.boat.slice(1).toLowerCase()+' '+esc(d.boat):'')+(d.team?' · '+esc(d.team):'')+'</div></div>'
       + '<div class="sc">'+sc+'</div></button>'+det+'</div>';
   }
 
