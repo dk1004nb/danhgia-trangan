@@ -27,6 +27,9 @@
   .boat{width:56px;height:56px;border-radius:14px;background:#e7f1ee;display:grid;place-items:center;flex:none}
   .driver b{font-size:18px;display:block}
   .driver span{color:var(--muted);font-size:14px}
+  .boat{overflow:hidden}
+  .boat img{width:100%;height:100%;object-fit:cover;display:block}
+  .plink{display:inline-block;margin-top:4px;font-size:13.5px;font-weight:600;color:var(--green);text-decoration:none}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px;margin-bottom:16px}
   .crit{padding:14px 0;border-bottom:1px solid var(--line)}
   .crit:last-child{border-bottom:0}
@@ -86,10 +89,10 @@
 
   <section id="formView" class="hidden">
     <div class="driver">
-      <div class="boat" aria-hidden="true">
+      <div class="boat" id="dPic" aria-hidden="true">
         <svg width="34" height="34" viewBox="0 0 34 34"><path d="M3 20h28l-4 6H7z" fill="#1f4d3a"/><path d="M17 6v13M17 6l7 10h-7" stroke="#3f8f86" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 29q4 2 8 0t8 0 8 0 8 0" stroke="#3f8f86" stroke-width="1.6" fill="none"/></svg>
       </div>
-      <div><span data-t="driverLbl">Người lái đò</span><b id="dId">—</b><span id="dMeta"></span></div>
+      <div><span data-t="driverLbl">Người lái đò</span><b id="dId">—</b><span id="dMeta"></span><br><a id="dProf" class="plink" hidden></a></div>
     </div>
 
     <h2 data-t="h2stars">Chấm điểm theo từng tiêu chí</h2>
@@ -133,7 +136,7 @@
 <script>
 (function(){
   var T = {
-    vi:{site:'Khu du lịch sinh thái Tràng An',title:'Đánh giá chuyến đò của bạn',driverLbl:'Người lái đò',boat:'Đò số',
+    vi:{site:'Khu du lịch sinh thái Tràng An',title:'Đánh giá chuyến đò của bạn',driverLbl:'Người lái đò',boat:'Đò số',prof:'Xem hồ sơ người lái đò →',
         h2stars:'Chấm điểm theo từng tiêu chí',h2tip:'Người lái đò có xin tiền boa hoặc ép mua hàng không?',yes:'Có',no:'Không',
         h2cmt:'Nhận xét, góp ý hoặc lời khen',cmtPh:'Điều bạn thích, hoặc điều cần cải thiện…',send:'Gửi đánh giá',sending:'Đang gửi…',
         privacy:'Đánh giá là ẩn danh. Hệ thống không thu thập họ tên, số điện thoại hay vị trí của bạn. Ý kiến chỉ dùng để nâng cao chất lượng phục vụ.',
@@ -141,7 +144,7 @@
         nf:'Không tìm thấy người lái đò',nf2:'Mã QR không hợp lệ hoặc đã ngừng sử dụng. Vui lòng quét lại mã trên thẻ của người lái đò.',
         loading:'Đang tải…',retry:'Thử lại',net:'Không kết nối được',net2:'Vui lòng kiểm tra kết nối mạng rồi thử lại.',missing:'Vui lòng chấm đủ tất cả tiêu chí.',dup:'Bạn đã đánh giá người lái đò này rồi. Cảm ơn bạn!',fail:'Không gửi được. Vui lòng kiểm tra mạng và thử lại.',
         rate:['Rất tệ','Tệ','Bình thường','Tốt','Rất tốt']},
-    en:{site:'Trang An Scenic Landscape Complex',title:'Rate your boat trip',driverLbl:'Boat rower',boat:'Boat no.',
+    en:{site:'Trang An Scenic Landscape Complex',title:'Rate your boat trip',driverLbl:'Boat rower',boat:'Boat no.',prof:'View rower profile →',
         h2stars:'Rate each aspect',h2tip:'Did the rower ask for tips or pressure you to buy anything?',yes:'Yes',no:'No',
         h2cmt:'Comments, suggestions or compliments',cmtPh:'What you enjoyed, or what could be better…',send:'Submit rating',sending:'Sending…',
         privacy:'Your rating is anonymous. We do not collect your name, phone number or location. Feedback is used only to improve service.',
@@ -233,8 +236,9 @@
     document.querySelectorAll('[data-t]').forEach(function(el){ var v = T[lang][el.dataset.t]; if (v) el.textContent = v; });
     document.querySelectorAll('[data-tp]').forEach(function(el){ el.placeholder = T[lang][el.dataset.tp]; });
     document.querySelectorAll('.lang button').forEach(function(b){ b.classList.toggle('on', b.dataset.lang === lang); });
-    $('dId').textContent = driver.id || '—';
-    $('dMeta').textContent = driver.boat ? (T[lang].boat + ' ' + driver.boat + (driver.team ? ' · ' + driver.team : '')) : '';
+    $('dId').textContent = driver.name || driver.id || '—';
+    $('dMeta').textContent = [driver.name ? driver.id : '', driver.boat ? T[lang].boat + ' ' + driver.boat : '', driver.team || ''].filter(Boolean).join(' · ');
+    var pl = $('dProf'); pl.hidden = !driver.profile; pl.textContent = T[lang].prof; pl.href = 'hoso.html?id=' + encodeURIComponent(driver.id || '');
     buildCriteria();
   }
   document.querySelectorAll('.lang button').forEach(function(b){
@@ -279,6 +283,7 @@
     api({ action:'pub_driver', id: qid }).then(function(res){
       if (!res || !res.ok) { lastErr = 'nf'; showErr('nf'); return; }
       driver = res.driver;
+      if (driver.photo && /^data:image\/jpeg;base64,/.test(driver.photo)) { var im = new Image(); im.alt = ''; im.src = driver.photo; $('dPic').innerHTML = ''; $('dPic').appendChild(im); }
       if (res.criteria && res.criteria.length) criteria = res.criteria;
       lastErr = ''; applyLang(); show('formView');
     }).catch(function(){ lastErr = 'net'; showErr('net'); });
